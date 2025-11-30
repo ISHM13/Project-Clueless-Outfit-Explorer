@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Customer (
     ZIP VARCHAR(10),
     Country VARCHAR(50)
 );
-
+˝
 DROP TABLE IF EXISTS Business;
 CREATE TABLE IF NOT EXISTS Business (
 	CompanyID INT PRIMARY KEY,
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS ClothingItem (
 	Size VARCHAR(50),
 	QualityRating INT,
     OutdatedFlag BOOLEAN,
-PopularityPercentage DECIMAL(4,2)
+	PopularityPercentage DECIMAL(4,2)
 );
 
 DROP TABLE IF EXISTS Aesthetic;

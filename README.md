@@ -1,29 +1,22 @@
-# Fall 2025 CS 3200 Project Template
+# Clueless: The Ultimate Outfit Explorer Web Application
 
-This is a template repo for Dr. Fontenot's Fall 2025 CS 3200 Course Project. 
+Update the README.md in the main repo folder to include an overview of YOUR team’s project and information about how to start the Docker containers (see other GitHub repos for models of how to write a good README). 
 
-It includes most of the infrastructure setup (containers), sample databases, and example UI pages. Explore it fully and ask questions!
+### Project Overview
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## Prerequisites
+### Key Elements
+1) x
+2) x
+3) x
 
-- A GitHub Account
-- A terminal-based git client or GUI Git client such as GitHub Desktop or the Git plugin for VSCode.
-- A distribution of Python running on your laptop. The distribution supported by the course is [Anaconda](https://www.anaconda.com/download) or [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/install).
-  - Create a new Python 3.11 environment in `conda` named `db-proj` by running:  
-     ```bash
-     conda create -n db-proj python=3.11
-     ```
-  - Install the Python dependencies listed in `api/requirements.txt` and `app/src/requirements.txt` into your local Python environment. You can do this by running `pip install -r requirements.txt` in each respective directory.
-     ```bash
-     cd api
-     pip install -r requirements.txt
-     cd ../app
-     pip install -r requirements.txt
-     ```
-     Note that the `..` means go to the parent folder of the folder you're currently in (which is `api/` after the first command)
-- VSCode with the Python Plugin installed
-  - You may use some other Python/code editor.  However, Course staff will only support VS Code. 
+### How To Use
+1) x
+2) x
+3) x
+4) x
 
+*****
 
 ## Structure of the Repo
 
