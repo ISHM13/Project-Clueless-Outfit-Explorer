@@ -75,6 +75,18 @@ def NotifAlert():
 def SettingPerm():
     st.sidebar.page_link("pages/26_Setting_Permission.py", label="Settings & Permissions", icon="⚙️")
 
+### ------------------------ Data Analyst Role -------------------------------
+def DataAnalystHomeNav():
+    st.sidebar.page_link("pages/31_Data_Analyst_Home.py", label="Data Analyst Home", icon="🏠")
+def DataAnalystBrandsNav():
+    st.sidebar.page_link("pages/32_Data_Analyst_Brands.py", label="Brands to Watch", icon="🏷️")
+def DataAnalystTrendingNav():
+    st.sidebar.page_link("pages/33_Data_Analyst_Trending.py", label="Current Trends", icon="📈")
+def DataAnalystWishListsNav():
+    st.sidebar.page_link("pages/34_Data_Analyst_Wish_List.py", label="Wish Lists", icon="❤️")
+def DataAnalystClosetStaplesNav():
+    st.sidebar.page_link("pages/35_Data_Analyst_Closet_Staples.py", label="Closet Staples", icon="🗄️")
+
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
     """
