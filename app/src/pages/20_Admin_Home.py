@@ -11,7 +11,27 @@ SideBarLinks()
 
 st.title('System Admin Home Page')
 
-if st.button('Update ML Models', 
+if st.button('Dashboard & Overview',
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
+  st.switch_page('pages/22_Dashboard_Overview.py')
+
+if st.button('Business Client Management',
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/23_Business_Client_Mgmt.py')
+
+if st.button('Wishlist Matching',
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/24_Wishlist_Match.py')
+
+if st.button('Notifications & Alerts',
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/25_Notif_Alert.py')
+
+if st.button('Settings & Permissions',
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/26_Setting_Permission.py')

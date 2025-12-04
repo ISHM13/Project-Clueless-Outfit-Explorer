@@ -68,10 +68,16 @@ def ClassificationNav():
 #### ------------------------ System Admin Role ------------------------
 def AdminPageNav():
     st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
-
+def Dashboard():
+    st.sidebar.page_link("pages/22_Dashboard_Overview.py", label="Dashboard & Overview", icon="📑")
+def BCMgmt():
+    st.sidebar.page_link("pages/23_Business_Client_Mgmt.py", label="BC Management", icon="🧑‍💼")
+def WishMatch():
+    st.sidebar.page_link("pages/24_Wishlist_Match.py", label="Wishlist Matching", icon="👚")
+def NotifAlert():
+    st.sidebar.page_link("pages/25_Notif_Alert.py", label="Notifications & Alerts", icon="🚨")
+def SettingPerm():
+    st.sidebar.page_link("pages/26_Setting_Permission.py", label="Settings & Permissions", icon="⚙️")
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -115,6 +121,11 @@ def SideBarLinks(show_home=False):
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             AdminPageNav()
+            Dashboard()
+            BCMgmt()
+            WishMatch()
+            NotifAlert()
+            SettingPerm()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
