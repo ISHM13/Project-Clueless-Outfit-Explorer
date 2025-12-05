@@ -8,6 +8,9 @@ business = Blueprint('business', __name__)
 customer = Blueprint('customer', __name__)
 general = Blueprint('general', __name__)
 
+@general.route('/', methods=['GET'])
+def health_check():
+    return jsonify(status="healthy", message="API is running"), 200
 
 # ----------- Admin/general Routes -----------
 
@@ -44,7 +47,7 @@ def create_outfit():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@general.route("/outfit/<int:aesthetic_id>", methods=["GET"])
+@general.route("/outfits/<int:aesthetic_id>", methods=["GET"])
 def search_outfits(aesthetic_id):
     try:
         cursor = db.get_db().cursor()
