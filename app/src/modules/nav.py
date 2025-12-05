@@ -58,8 +58,11 @@ def ClassificationNav():
     )
 
 
-
-
+#### ------------------------ Pages for Role of Business Ownwer ------------------------
+def BusinessInventoryNav():
+    st.sidebar.page_link("pages/38_Business_Inventory.py", label="Inventory", icon="📦")
+def BusinessHomeNav():
+    st.sidebar.page_link("pages/36_Business_Home.py", label="Home", icon="🖥️")
 
 #### ------------------------ System Admin Role ------------------------
 def AdminPageNav():
@@ -74,6 +77,18 @@ def NotifAlert():
     st.sidebar.page_link("pages/25_Notif_Alert.py", label="Notifications & Alerts", icon="🚨")
 def SettingPerm():
     st.sidebar.page_link("pages/26_Setting_Permission.py", label="Settings & Permissions", icon="⚙️")
+
+### ------------------------ Data Analyst Role -------------------------------
+def DataAnalystHomeNav():
+    st.sidebar.page_link("pages/31_Data_Analyst_Home.py", label="Data Analyst Home", icon="🏠")
+def DataAnalystBrandsNav():
+    st.sidebar.page_link("pages/32_Data_Analyst_Brands.py", label="Brands to Watch", icon="🏷️")
+def DataAnalystTrendingNav():
+    st.sidebar.page_link("pages/33_Data_Analyst_Trending.py", label="Current Trends", icon="📈")
+def DataAnalystWishListsNav():
+    st.sidebar.page_link("pages/34_Data_Analyst_Wish_List.py", label="Wish Lists", icon="❤️")
+def DataAnalystClosetStaplesNav():
+    st.sidebar.page_link("pages/35_Data_Analyst_Closet_Staples.py", label="Closet Staples", icon="🗄️")
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -122,6 +137,11 @@ def SideBarLinks(show_home=False):
             WishMatch()
             NotifAlert()
             SettingPerm()
+
+        # If the user is an business owner, give them access to the business pages
+        if st.session_state["role"] == "business_owner":
+            BusinessInventoryNav()
+            BusinessHomeNav()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
