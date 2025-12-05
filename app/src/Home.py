@@ -80,7 +80,7 @@ if st.button('Act as Rebecca, an Business Owner',
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'business_owner'
-    st.session_state['first_name'] = 'Rebecca'
+    st.session_state['first_name'] = 'Rebeccas Boutique'
     st.switch_page('pages/36_Business_Home.py')
 
 

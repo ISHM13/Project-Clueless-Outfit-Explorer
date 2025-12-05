@@ -8,30 +8,13 @@ st.set_page_config(layout = 'wide')
 
 API_BASE_URL = ""
 
-# Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
 
-# Initialize session state:
-if 'first_name' not in st.session_state:
-    st.session_state['first_name'] = 'Guest'
-
-if "role" not in st.session_state:
-    st.session_state["role"] = "business_owner"
-
-if 'active_category' not in st.session_state:
-    st.session_state.active_category = None
-
-if 'active_occasion' not in st.session_state:
-    st.session_state.active_occasion = None
-
-if 'business_name' not in st.session_state:
-    st.session_state['business_name'] = "Rebecca's Boutique"
-
 # Title page:
-st.title(f"Business Profile — {st.session_state['business_name']}")
-st.header(f"Welcome back, {st.session_state['first_name']} 👋")
+st.header(f"Welcome back to {st.session_state['first_name']} 👋")
 
 st.write("")  # little spacing
+
 
 st.write("---")
 st.subheader("Inventory Performance")
