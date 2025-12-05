@@ -58,7 +58,11 @@ def ClassificationNav():
     )
 
 
-
+#### ------------------------ Pages for Role of Business Ownwer ------------------------
+def BusinessInventoryNav():
+    st.sidebar.page_link(
+        "pages/33_Business_Inventory.py", label="Inventory", icon="📦"
+    )
 
 
 #### ------------------------ System Admin Role ------------------------
@@ -134,6 +138,10 @@ def SideBarLinks(show_home=False):
             WishMatch()
             NotifAlert()
             SettingPerm()
+
+        # If the user is an business owner, give them access to the business pages
+        if st.session_state["role"] == "business_owner":
+            BusinessInventoryNav()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
