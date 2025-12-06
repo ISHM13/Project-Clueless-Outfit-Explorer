@@ -550,6 +550,27 @@ def get_business_inventory(business_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# this gives me all of the catalog items that are not currently in the inventory
+@business.route("/business/<int:business_id>/inventory/available", methods=["GET"])
+def get_available_items_for_business(business_id):
+    cursor = db.get_db().cursor()
+    # all items NOT currently in inventory for this business
+    cursor.execute("""
+        SELECT ci.ItemID, ci.Name, ci.Category, ci.Price
+        FROM ClothingItem ci
+        LEFT JOIN BusinessInventoryItemStorage biis
+          ON biis.ClothingItemID = ci.ItemID
+         AND biis.InventoryID IN (
+             SELECT InventoryID
+             FROM BusinessInventory
+             WHERE CompanyID = %s
+         )
+        WHERE biis.ClothingItemID IS NULL
+    """, (business_id,))
+    rows = cursor.fetchall()
+    cursor.close()
+    return jsonify(rows), 200
+
 # ----------- Customer Routes -----------# 
 
 @customer.route("/customer/<int:customer_id>/notifications", methods=["POST"])
