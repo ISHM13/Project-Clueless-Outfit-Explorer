@@ -67,7 +67,7 @@ if st.button('Act as Alison Preistly, an data analyst',
     st.session_state['first_name'] = 'Alison'
     st.switch_page('pages/31_Data_Analyst_Home.py')
 
-if st.button('Act as Owen, an System Administrator', 
+if st.button('Act as Owen Lin, an System Administrator', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
