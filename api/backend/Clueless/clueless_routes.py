@@ -517,6 +517,39 @@ def delete_business_wishlist_item(business_id, wishlist_id, item_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500 
 
+@business.route("/business/<int:business_id>/inventory", methods=["GET"])
+def get_business_inventory(business_id):
+    try:
+        cursor = db.get_db().cursor()
+
+        # validate business
+        cursor.execute("SELECT * FROM Business WHERE CompanyID = %s", (business_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "business not found"}), 404
+
+        # query all inventory rows
+        cursor.execute("""
+        SELECT 
+            CI.ItemID,
+            CI.Name,
+            CI.Category,
+            CI.Price,
+            BIIS.QuantityInStock,
+            BIIS.UnitsSold
+        FROM BusinessInventoryItemStorage BIIS
+        JOIN ClothingItem CI ON BIIS.ClothingItemID = CI.ItemID
+        JOIN BusinessInventory BI ON BIIS.InventoryID = BI.InventoryID
+        WHERE BI.CompanyID = %s
+        ORDER BY CI.Name
+        """, (business_id,))
+
+        items = cursor.fetchall()
+        cursor.close()
+        return jsonify(items), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # ----------- Customer Routes -----------# 
 
 @customer.route("/customer/<int:customer_id>/notifications", methods=["POST"])

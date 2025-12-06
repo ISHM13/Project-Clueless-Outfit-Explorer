@@ -4,8 +4,12 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 import pandas as pd
 from modules.nav import SideBarLinks
+import requests
+from pages._36_Business_Home import load_inventory_df
 
 st.set_page_config(layout='wide')
+
+API_BASE = "http://web-api:4000"
 
 SideBarLinks()
 
@@ -21,18 +25,8 @@ st.caption(f"All items for {st.session_state['business_name']}")
 
 st.write("---")
 
-# 🔹 Same dummy inventory data (later: replace with API call)
-inventory_data = [
-    {"Item ID": 820, "Item Name": "Vintage Silk Scarf", "Category": "Accessory", "Price": 120.00, "Size": "OneSize", "Qty in Stock": 12, "Units Sold (30d)": 34, "Ethically Sourced": "Yes"},
-    {"Item ID": 821, "Item Name": "Faux Leather Skirt", "Category": "Skirt", "Price": 45.00, "Size": "S", "Qty in Stock": 8, "Units Sold (30d)": 10, "Ethically Sourced": "Yes"},
-    {"Item ID": 825, "Item Name": "Oversized Denim Jacket", "Category": "Jacket", "Price": 75.00, "Size": "XL", "Qty in Stock": 5, "Units Sold (30d)": 18, "Ethically Sourced": "Yes"},
-    {"Item ID": 837, "Item Name": "High Waisted Leggings", "Category": "Pants", "Price": 90.00, "Size": "S", "Qty in Stock": 20, "Units Sold (30d)": 50, "Ethically Sourced": "Yes"},
-    {"Item ID": 842, "Item Name": "Velour Tracksuit", "Category": "Set", "Price": 80.00, "Size": "L", "Qty in Stock": 3, "Units Sold (30d)": 4, "Ethically Sourced": "No"},
-    {"Item ID": 843, "Item Name": "Knee High Boots", "Category": "Shoes", "Price": 120.00, "Size": "7", "Qty in Stock": 8, "Units Sold (30d)": 2, "Ethically Sourced": "No"},
-    {"Item ID": 844, "Item Name": "Baguette Bag", "Category": "Accessory", "Price": 200.00, "Size": "OneSize", "Qty in Stock": 10, "Units Sold (30d)": 1, "Ethically Sourced": "Yes"},
-]
-
-inv_df = pd.DataFrame(inventory_data)
+business_id = st.session_state.get('business_id', 1)
+inv_df = load_inventory_df(business_id)
 
 # Optional: little filters at top
 with st.expander("Filter inventory"):
@@ -50,13 +44,13 @@ with st.expander("Filter inventory"):
             default=None
         )
 
-    filtered = inv_df.copy()
-    if category_filter:
-        filtered = filtered[filtered["Category"].isin(category_filter)]
-    if ethical_filter:
-        filtered = filtered[filtered["Ethically Sourced"].isin(ethical_filter)]
-else:
-    filtered = inv_df
+filtered = inv_df.copy()
+
+if category_filter:
+    filtered = filtered[filtered["Category"].isin(category_filter)]
+
+if ethical_filter:
+    filtered = filtered[filtered["Ethically Sourced"].isin(ethical_filter)]
 
 st.dataframe(
     filtered,

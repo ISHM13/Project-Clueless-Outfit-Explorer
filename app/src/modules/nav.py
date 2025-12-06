@@ -62,7 +62,7 @@ def ClassificationNav():
 def BusinessInventoryNav():
     st.sidebar.page_link("pages/38_Business_Inventory.py", label="Inventory", icon="📦")
 def BusinessHomeNav():
-    st.sidebar.page_link("pages/36_Business_Home.py", label="Home", icon="🖥️")
+    st.sidebar.page_link("pages/_36_Business_Home.py", label="Home", icon="🖥️")
 
 #### ------------------------ System Admin Role ------------------------
 def AdminPageNav():
