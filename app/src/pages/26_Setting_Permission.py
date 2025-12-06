@@ -11,7 +11,6 @@ SideBarLinks()
 API_BASE_URL = "http://web-api:4000"
 
 
-
 if 'admins' not in st.session_state:
     st.session_state.admins = [
         {'name': 'Lucas Fu', 'user_id': '16022006', 'role': 'Super Admin'},

@@ -254,11 +254,10 @@ elif st.session_state.view_mode == 'add':
         
         st.write("")
         
-        # Submit Button
+
         submitted = st.form_submit_button("Add", use_container_width=True, type="primary")
         
         if submitted:
-            # Validation
             if not company_name:
                 st.error("Please enter Company Name")
             elif business_type == "---- Please select the option ----":
