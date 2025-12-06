@@ -1,156 +1,116 @@
 import logging
-logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
-import requests
-from datetime import datetime
-import pandas as pd
 
-st.set_page_config(layout = 'wide')
-
+st.set_page_config(layout='wide')
 SideBarLinks()
 
-# Initialize session state
-if 'wishlist_items' not in st.session_state:
-    st.session_state.wishlist_items = [
-        {
-            'name': 'White winter hood',
-            'wishlist_count': 36,
-            'business': 'Zara International',
-            'sku': '14Kp569',
-            'mapped': False
-        },
-        {
-            'name': 'Black leather jacket',
-            'wishlist_count': 28,
-            'business': 'H&M',
-            'sku': 'HM7894',
-            'mapped': False
-        },
-        {
-            'name': 'Blue denim jeans',
-            'wishlist_count': 22,
-            'business': 'Levi\'s',
-            'sku': 'LV5012',
-            'mapped': False
-        }
+# =============================================================================
+# Session State
+# =============================================================================
+
+if 'view' not in st.session_state:
+    st.session_state.view = 'main'
+
+if 'mapping_suggestions' not in st.session_state:
+    st.session_state.mapping_suggestions = [
+        {'item_name': 'White winter hood', 'wishlist_count': 36, 'business': 'Zara International', 'sku': '14Kp569', 'mapped': False},
+        {'item_name': 'Black leather jacket', 'wishlist_count': 28, 'business': 'H&M Group', 'sku': '22Lj891', 'mapped': False},
+        {'item_name': 'Blue denim jeans', 'wishlist_count': 24, 'business': 'Gap Inc.', 'sku': '33Dj452', 'mapped': False},
+        {'item_name': 'Floral summer dress', 'wishlist_count': 19, 'business': 'Forever 21', 'sku': '44Fd783', 'mapped': False},
+        {'item_name': 'Cashmere sweater', 'wishlist_count': 15, 'business': 'Uniqlo', 'sku': '55Cs126', 'mapped': False},
     ]
 
-st.title('Wishlist Matching Page')
+if 'mapping_history' not in st.session_state:
+    st.session_state.mapping_history = []
 
-st.write('\n\n')
-st.write('## Wishlist Overview')
+# Sample data for top wishlisted
+TOP_WISHLISTED = [
+    {'Name': 'High Waisted Leggings', 'total_wishlists': 45},
+    {'Name': 'Combat Boots', 'total_wishlists': 38},
+    {'Name': 'Lace Corset Top', 'total_wishlists': 32},
+    {'Name': 'Oversized Denim Jacket', 'total_wishlists': 29},
+    {'Name': 'High Top Sneakers', 'total_wishlists': 25},
+]
 
-# Navigation buttons
-col1, col2, col3 = st.columns(3)
-with col1:
-    if st.button("🌟 Top Wishlisted →", use_container_width=True):
-        st.session_state.view = 'top_wishlisted'
-with col2:
-    if st.button("📦 Unmatched Items →", use_container_width=True):
+# =============================================================================
+# Views
+# =============================================================================
+
+def back_button():
+    if st.button("← Back"):
+        st.session_state.view = 'main'
+        st.rerun()
+
+# MAIN VIEW
+if st.session_state.view == 'main':
+    st.title('Wishlist Matching Page')
+    st.subheader('Wishlist Overview')
+    
+    if st.button("🏆 Top Wishlisted", use_container_width=True):
+        st.session_state.view = 'top'
+        st.rerun()
+    if st.button("❓ Unmatched Items", use_container_width=True):
         st.session_state.view = 'unmatched'
-with col3:
-    if st.button("🔗 Mapping Suggestions →", use_container_width=True):
+        st.rerun()
+    if st.button("🔗 Mapping Suggestions", use_container_width=True):
         st.session_state.view = 'mapping'
-
-st.caption("Mapping Suggestions Wishlist item to retailer SKU")
-
-st.divider()
-
-st.write('\n\n')
-st.write('## Inventory Status')
-
-col1, col2 = st.columns(2)
-with col1:
-    st.metric(label="Inventory Added", value="12")
-with col2:
-    st.metric(label="New Collection in Pipeline", value="8")
-
-st.divider()
-
-# Mapping Suggestions Section
-st.write('\n\n')
-st.write('## Mapping Suggestions')
-
-# Top Wishlist Item
-st.write("### Top Wishlist")
-
-top_item = st.session_state.wishlist_items[0]
-
-col1, col2 = st.columns([1, 10])
-with col1:
-    st.markdown("⭐")
-with col2:
-    st.markdown(f"**{top_item['name']}**")
-    st.caption(f"# in Wishlist {top_item['wishlist_count']}")
-
-st.write('\n')
-
-# Mapping Suggestion Details
-st.write("### Mapping Suggestion")
-
-col1, col2, col3 = st.columns([1, 8, 2])
-with col1:
-    st.markdown("ℹ️")
-with col2:
-    st.markdown(f"**Business:** {top_item['business']}")
-    st.markdown(f"**SKU:** {top_item['sku']}")
-with col3:
-    # Placeholder for product image
-    st.markdown("<p style='font-size: 60px; margin: 0;'>🧥</p>", unsafe_allow_html=True)
-
-st.write('\n\n')
-
-# Map button
-if st.button("Map", use_container_width=True, type="primary"):
-    top_item['mapped'] = True
-    st.success(f"Successfully mapped '{top_item['name']}' to {top_item['business']} SKU: {top_item['sku']}")
-    st.rerun()
-
-st.divider()
-
-# Additional sections in tabs
-tab1, tab2, tab3 = st.tabs(["All Wishlist Items", "Unmapped Items", "Mapping History"])
-
-with tab1:
-    st.write('\n\n')
-    st.write('## All Wishlist Items')
+        st.rerun()
     
-    df = pd.DataFrame(st.session_state.wishlist_items)
-    st.dataframe(
-        df[['name', 'wishlist_count', 'business', 'sku', 'mapped']],
-        use_container_width=True,
-        hide_index=True
-    )
+    st.divider()
+    st.subheader('📊 Statistics')
+    c1, c2 = st.columns(2)
+    c1.metric("Inventory Added", 12)
+    c2.metric("New Collection in Pipeline", 8)
 
-with tab2:
-    st.write('\n\n')
-    st.write('## Unmatched Items')
+# TOP WISHLISTED VIEW
+elif st.session_state.view == 'top':
+    back_button()
+    st.title('🏆 Top Wishlisted')
     
-    unmapped = [item for item in st.session_state.wishlist_items if not item['mapped']]
+    for i, item in enumerate(TOP_WISHLISTED):
+        rank = ["🥇", "🥈", "🥉"][i] if i < 3 else f"#{i+1}"
+        st.write(f"{rank} **{item['Name']}** — Wishlists: {item['total_wishlists']}")
+        st.divider()
+
+# UNMATCHED VIEW
+elif st.session_state.view == 'unmatched':
+    back_button()
+    st.title('❓ Unmatched Items')
     
-    if unmapped:
-        df_unmapped = pd.DataFrame(unmapped)
-        st.dataframe(
-            df_unmapped[['name', 'wishlist_count']],
-            use_container_width=True,
-            hide_index=True
-        )
+    unmatched = [m for m in st.session_state.mapping_suggestions if not m.get('mapped')]
+    if unmatched:
+        for item in unmatched:
+            st.write(f"**{item['item_name']}** — Wishlists: {item['wishlist_count']}")
+            st.write("⚠️ Not mapped to any business SKU")
+            st.divider()
     else:
-        st.info("All items have been mapped!")
+        st.success("✅ All items have been mapped!")
 
-with tab3:
-    st.write('\n\n')
-    st.write('## Mapping History')
+# MAPPING VIEW
+elif st.session_state.view == 'mapping':
+    back_button()
+    st.title('🔗 Mapping Suggestions')
     
-    mapped = [item for item in st.session_state.wishlist_items if item['mapped']]
+    if st.session_state.mapping_history:
+        if st.button("↩️ Undo Last Mapping"):
+            last_item = st.session_state.mapping_history.pop()
+            for s in st.session_state.mapping_suggestions:
+                if s['item_name'] == last_item:
+                    s['mapped'] = False
+            st.rerun()
     
-    if mapped:
-        df_mapped = pd.DataFrame(mapped)
-        st.dataframe(
-            df_mapped[['name', 'business', 'sku', 'wishlist_count']],
-            use_container_width=True,
-            hide_index=True
-        )
+    unmatched = [s for s in st.session_state.mapping_suggestions if not s.get('mapped')]
+    
+    if not unmatched:
+        st.success("✅ All items have been mapped!")
     else:
-        st.info("No items mapped yet")
+        for s in unmatched:
+            with st.container(border=True):
+                st.write(f"**Item:** {s['item_name']}")
+                st.write(f"**Business:** {s['business']}")
+                st.write(f"**SKU:** {s['sku']}")
+                if st.button("Map", key=s['item_name'], use_container_width=True, type="primary"):
+                    s['mapped'] = True
+                    st.session_state.mapping_history.append(s['item_name'])
+                    st.rerun()
