@@ -1,66 +1,64 @@
 import logging
-logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
-from datetime import datetime
 
-st.set_page_config(layout = 'wide')
+logger = logging.getLogger(__name__)
 
+st.set_page_config(layout='wide')
 SideBarLinks()
 
-# Initialize session state
+API_BASE_URL = "http://web-api:4000"
+
+
 if 'admins' not in st.session_state:
     st.session_state.admins = [
-        {'name': 'Lucas Fu', 'user_id': '111111111', 'role': 'Super Admin'},
-        {'name': 'Alvin Wong', 'user_id': '222222222', 'role': 'Content Moderator'}
+        {'name': 'Lucas Fu', 'user_id': '16022006', 'role': 'Super Admin'},
+        {'name': 'Alvin Wong', 'user_id': '11112005', 'role': 'Content Moderator'}
     ]
+
+if 'admin_history' not in st.session_state:
+    st.session_state.admin_history = []
 
 if 'usage_violations' not in st.session_state:
     st.session_state.usage_violations = [
-        {
-            'name': 'Minsang Lee',
-            'user_id': 'MD9877',
-            'reason': 'Invalid email'
-        },
-        {
-            'name': 'Saba Khundadze',
-            'user_id': 'KN2374',
-            'reason': 'Password Violation'
-        }
+        {'name': 'Nisha Vernekar', 'user_id': 'MD9877', 'reason': 'Invalid email'},
+        {'name': 'Janet Chen', 'user_id': 'JC1234', 'reason': 'Password Violation'}
     ]
+
+
 
 st.title('Settings & Permissions Page')
 
-st.write('\n\n')
-
-# Create tabs for different sections
 tab1, tab2 = st.tabs(["Admin Management", "Remove Usage Access"])
 
+
 with tab1:
-    st.write('\n\n')
-    st.write('## Add Admin')
+    st.write("")
+    
+    # Add Admin Section
+    st.subheader('Add Admin')
     
     with st.form("add_admin_form"):
-        st.markdown("**Name**")
-        admin_name = st.text_input("Name", value="Nicolas", label_visibility="collapsed")
+        st.write("**Name**")
+        admin_name = st.text_input("Name", value="", placeholder="Chayapa", label_visibility="collapsed")
         
-        st.markdown("**User ID**")
-        admin_user_id = st.text_input("User ID", value="000000000", label_visibility="collapsed")
+        st.write("**User ID**")
+        admin_user_id = st.text_input("User ID", value="", placeholder="000000000", label_visibility="collapsed")
         
-        st.markdown("**Admin Roles**")
+        st.write("**Admin Roles**")
         admin_role = st.selectbox(
             "Admin Roles",
-            ["Super Admin", "Content Moderator", "Data Analyst", "Support Staff"],
+            ["Super Admin / Content Moderator...", "Super Admin", "Content Moderator", "Data Analyst", "Support Staff"],
             label_visibility="collapsed"
         )
         
-        st.write('\n')
+        st.write("")
         
         submitted = st.form_submit_button("Add", use_container_width=True, type="primary")
         
         if submitted:
-            if admin_name and admin_user_id:
+            if admin_name and admin_user_id and admin_role != "Super Admin / Content Moderator...":
                 new_admin = {
                     'name': admin_name,
                     'user_id': admin_user_id,
@@ -74,91 +72,108 @@ with tab1:
     
     st.divider()
     
-    st.write('\n\n')
-    st.write('## Remove Admin')
+    # Remove Admin Section
+    st.subheader('Remove Admin')
     
-    search_admin = st.text_input("Search Admin", placeholder="Search", label_visibility="collapsed")
+    # Undo button
+    if st.session_state.admin_history:
+        if st.button("↩️ Undo Last Delete"):
+            last_admin = st.session_state.admin_history.pop()
+            st.session_state.admins.append(last_admin)
+            st.success(f"Restored {last_admin['name']}")
+            st.rerun()
+    
+    search_admin = st.text_input("Search Admin", placeholder="🔍 Search", label_visibility="collapsed")
     st.caption("Search by Name or User ID")
     
-    st.write('\n')
+    st.write("")
     
     # Display current admins
     if st.session_state.admins:
         st.write("**Current Admins:**")
         for admin in st.session_state.admins:
-            col1, col2, col3 = st.columns([3, 2, 1])
-            with col1:
-                st.write(f"**{admin['name']}**")
-            with col2:
-                st.write(f"ID: {admin['user_id']}")
-            with col3:
-                if st.button("❌", key=f"remove_admin_{admin['user_id']}"):
-                    st.session_state.admins = [a for a in st.session_state.admins if a['user_id'] != admin['user_id']]
-                    st.success(f"Removed {admin['name']}")
-                    st.rerun()
+            # Filter by search
+            if search_admin:
+                if search_admin.lower() not in admin['name'].lower() and search_admin not in admin['user_id']:
+                    continue
+            
+            with st.container(border=True):
+                col1, col2 = st.columns([5, 1])
+                with col1:
+                    st.write(f"**{admin['name']}**")
+                    st.write(f"ID: {admin['user_id']} • Role: {admin['role']}")
+                with col2:
+                    if st.button("❌", key=f"remove_admin_{admin['user_id']}"):
+                        st.session_state.admin_history.append(admin)
+                        st.session_state.admins = [a for a in st.session_state.admins if a['user_id'] != admin['user_id']]
+                        st.success(f"Removed {admin['name']}")
+                        st.rerun()
     
-    st.write('\n')
+    st.write("")
     
-    if st.button("Remove", use_container_width=True):
-        if search_admin:
-            st.info(f"Searching for: {search_admin}")
-        else:
-            st.warning("Please enter a name or User ID to search")
+    if st.button("Remove", use_container_width=True, disabled=not search_admin):
+        found = False
+        for admin in st.session_state.admins:
+            if search_admin.lower() in admin['name'].lower() or search_admin == admin['user_id']:
+                st.session_state.admin_history.append(admin)
+                st.session_state.admins = [a for a in st.session_state.admins if a['user_id'] != admin['user_id']]
+                st.success(f"Removed {admin['name']}")
+                found = True
+                st.rerun()
+                break
+        if not found:
+            st.warning("Admin not found")
+
 
 with tab2:
-    st.write('\n\n')
+    st.write("")
     
-    # Alerts section
-    col1, col2 = st.columns([5, 1])
+    st.markdown("### Alerts ⚠️")
+    
+    col1, col2 = st.columns([4, 1])
     with col1:
-        st.markdown("## 🔺 Alerts")
+        st.write("**Users with usage violation**")
+    with col2:
+        violation_count = len(st.session_state.usage_violations)
+        if violation_count > 0:
+            st.markdown(f"<span style='background-color:#EF4444;color:white;padding:2px 10px;border-radius:50%;font-size:14px;'>{violation_count}</span>", unsafe_allow_html=True)
     
-    st.write("**Users with usage violation**")
+    st.write("")
     
-    violation_count = len(st.session_state.usage_violations)
-    if violation_count > 0:
-        st.markdown(f"<span style='background-color:#FF4B4B;color:white;padding:5px 12px;border-radius:50%;font-weight:bold;'>{violation_count}</span>", unsafe_allow_html=True)
-    
-    st.write('\n\n')
-    
-    # Display users with violations
     for violation in st.session_state.usage_violations:
-        with st.container():
-            col1, col2 = st.columns([1, 10])
+        with st.container(border=True):
+            col1, col2, col3 = st.columns([0.5, 0.5, 8])
             with col1:
                 st.markdown("🔴")
             with col2:
-                col_a, col_b = st.columns([8, 2])
-                with col_a:
-                    st.markdown(f"**{violation['name']}**")
-                    st.write(f"User ID: {violation['user_id']}")
-                    st.write(f"Reason: {violation['reason']}")
-                with col_b:
-                    st.markdown("👤")
-            
-            st.divider()
+                st.markdown("👤")
+            with col3:
+                st.write(f"**{violation['name']}**")
+                st.write(f"User ID: {violation['user_id']} • Reason: {violation['reason']}")
     
-    st.write('\n\n')
-    st.write('## User search')
+    st.write("")
     
-    search_user = st.text_input("Search User", placeholder="Search", label_visibility="collapsed")
+    st.subheader('User search')
+    
+    search_user = st.text_input("Search User", placeholder="🔍 Search", label_visibility="collapsed", key="search_violation")
     st.caption("Search by Name or User ID")
     
-    st.write('\n')
+    st.write("")
     
     if st.button("Remove", use_container_width=True, key="remove_user_access"):
         if search_user:
-            # Check if user is in violations list
-            user_found = any(v['user_id'] == search_user or v['name'].lower() == search_user.lower() 
-                           for v in st.session_state.usage_violations)
-            if user_found:
-                st.session_state.usage_violations = [
-                    v for v in st.session_state.usage_violations 
-                    if v['user_id'] != search_user and v['name'].lower() != search_user.lower()
-                ]
-                st.success(f"Removed user: {search_user}")
-                st.rerun()
-            else:
+            found = False
+            for v in st.session_state.usage_violations:
+                if v['user_id'] == search_user or v['name'].lower() == search_user.lower():
+                    st.session_state.usage_violations = [
+                        viol for viol in st.session_state.usage_violations 
+                        if viol['user_id'] != v['user_id']
+                    ]
+                    st.success(f"Removed user: {v['name']}")
+                    found = True
+                    st.rerun()
+                    break
+            if not found:
                 st.warning("User not found in violations list")
         else:
             st.warning("Please enter a name or User ID to search")

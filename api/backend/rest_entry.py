@@ -6,6 +6,10 @@ from logging.handlers import RotatingFileHandler
 
 from backend.db_connection import db
 from backend.Clueless.clueless_routes import general
+from backend.Clueless.clueless_routes import analytics
+from backend.Clueless.clueless_routes import business
+from backend.Clueless.clueless_routes import customer
+
 
 def create_app():
     app = Flask(__name__)
@@ -46,6 +50,10 @@ def create_app():
     # and give a url prefix to each
     app.logger.info("create_app(): registering blueprints with Flask app object.")
     app.register_blueprint(general, url_prefix="/general") 
+    app.register_blueprint(business, url_prefix="/business") 
+    app.register_blueprint(analytics, url_prefix="/analytics") 
+    app.register_blueprint(customer, url_prefix="/customer") 
+
 
     # Don't forget to return the app object
     return app

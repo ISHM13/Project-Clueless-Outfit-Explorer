@@ -1,85 +1,104 @@
 import logging
-logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
 import pandas as pd
 import altair as alt
 
-st.set_page_config(layout = 'wide')
+logger = logging.getLogger(__name__)
 
+st.set_page_config(layout='wide')
 SideBarLinks()
 
-st.title('Dashboard and Overview Page')
 
-st.write('\n\n')
-st.write('## Top KPI')
-col1, col2, col3 = st.columns(3) 
+API_BASE_URL = "http://web-api:4000"
+
+
+def get_admin_users():
+    """GET /general/admin/users"""
+    try:
+        resp = requests.get(f"{API_BASE_URL}/general/admin/users", timeout=10)
+        return (True, resp.json()) if resp.status_code == 200 else (False, resp.text)
+    except Exception as e:
+        return False, str(e)
+
+def get_admin_logs():
+    """GET /general/admin/logs"""
+    try:
+        resp = requests.get(f"{API_BASE_URL}/general/admin/logs", timeout=10)
+        return (True, resp.json()) if resp.status_code == 200 else (False, resp.text)
+    except Exception as e:
+        return False, str(e)
+
+
+success_users, users_data = get_admin_users()
+success_logs, logs_data = get_admin_logs()
+
+
+st.title("Dashboard & Overview Page")
+
+
+col1, col2, col3 = st.columns(3)
 with col1:
-    st.metric(label="Total Users", value="46,500")  
+    total_users = len(users_data) if success_users else 0
+    st.metric("👥 Total Users", total_users)
 with col2:
-    st.metric(label="Total Business Clients", value="96")   
+    biz_logs = len(logs_data.get('business_logs', [])) if success_logs else 0
+    st.metric("🏢 Business Logs", biz_logs)
 with col3:
-    st.metric(label="Pending Approvals", value="2", help="Users / Retailers") 
+    tech_logs = len(logs_data.get('tech_logs', [])) if success_logs else 0
+    st.metric("👨‍💻 Tech Logs", tech_logs)
+
 st.divider()
 
-st.write('\n\n')
-st.write('## Weekly New Signups')
-st.subheader("Weekly New Signups")
-st.write("Users / Businesses / Daily Outfits Uploads / Wishlist Conversions")
 
-df = pd.DataFrame({
-    "Date": ["Su", "M", "T", "W", "Th", "F", "S"],
-    "Users": [550, 625, 475, 600, 350, 750, 675]
-})
-chart = (
-    alt.Chart(df)
-    .mark_bar(color="#4A74F5")
-    .encode(
-        x=alt.X("Date", sort=["Su", "M", "T", "W", "Th", "F", "S"]),
-        y="Users"
-    )
-)
-st.altair_chart(chart, use_container_width=True)
+st.subheader("👥 User Management")
+if success_users and users_data:
+    df = pd.DataFrame(users_data)
+    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.download_button("📥 Export CSV", df.to_csv(index=False), "users.csv", "text/csv")
+else:
+    st.error(f"Failed to load users: {users_data}")
 
-df = pd.DataFrame({
-    "Date": ["Su", "M", "T", "W", "Th", "F", "S"],
-    "Businesses": [300, 450, 400, 500, 250, 600, 550]
-})
-chart = (
-    alt.Chart(df)
-    .mark_bar(color="#4A74F5")
-    .encode(
-        x=alt.X("Date", sort=["Su", "M", "T", "W", "Th", "F", "S"]),
-        y="Businesses"
-    )
-)
-st.altair_chart(chart, use_container_width=True)
+st.divider()
 
-df = pd.DataFrame({
-    "Date": ["Su", "M", "T", "W", "Th", "F", "S"],
-    "Daily Outfit Uploads": [220, 150, 190, 160, 80, 200, 325]
-})
-chart = (
-    alt.Chart(df)
-    .mark_bar(color="#4A74F5")
-    .encode(
-        x=alt.X("Date", sort=["Su", "M", "T", "W", "Th", "F", "S"]),
-        y="Daily Outfit Uploads"
-    )
-)
-st.altair_chart(chart, use_container_width=True)
 
-df = pd.DataFrame({
-    "Date": ["Su", "M", "T", "W", "Th", "F", "S"],
-    "Wishlist Conversions": [400, 250, 335, 420, 550, 600, 750]
-})
-chart = (
-    alt.Chart(df)
-    .mark_bar(color="#4A74F5")
-    .encode(
-        x=alt.X("Date", sort=["Su", "M", "T", "W", "Th", "F", "S"]),
-        y="Wishlist Conversions"
-    )
-)
-st.altair_chart(chart, use_container_width=True)
+st.subheader("📋 System Logs")
+if success_logs:
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("**🏢 Business Logs**")
+        biz_logs_list = logs_data.get('business_logs', [])
+        if biz_logs_list:
+            for i, log in enumerate(biz_logs_list):
+                status = log.get('BusinessStatus', 'Unknown')
+                icon = "🟢" if status == "Read" else "🔴"
+                with st.expander(f"{icon} Log {i+1} - {status}"):
+                    st.write(f"**Issues:** {log.get('Issues', 'None')}")
+        else:
+            st.info("No business logs")
+    
+    with col2:
+        st.write("**👨‍💻 Tech Logs**")
+        tech_logs_list = logs_data.get('tech_logs', [])
+        if tech_logs_list:
+            for log in tech_logs_list:
+                with st.expander(f"🔧 {log.get('Name', 'Unknown')}"):
+                    st.write(f"**System ID:** {log.get('SystemID')}")
+                    st.write(f"**Issues:** {log.get('IssueLogs', 'None')}")
+        else:
+            st.info("No tech logs")
+else:
+    st.warning(f"Could not load logs: {logs_data}")
+
+st.divider()
+st.caption("💡 Data refreshes on page load.")
+
+
+st.divider()
+
+st.subheader("Business Client Management")
+
+if st.button("Business Client Management", use_container_width=True, type="primary"):
+    st.switch_page("pages/23_Business_Client_Mgmt.py")
