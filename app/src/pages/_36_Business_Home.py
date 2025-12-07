@@ -21,8 +21,8 @@ st.write("")  # little spacing
 st.write("---")
 st.subheader("Inventory Performance")
 
-def load_inventory_df(business_id=1):
-    url = f"{API_BASE}/business/{business_id}/inventory"
+def load_inventory_df(business_id=40):
+    url = f"{API_BASE}/business/business/{business_id}/inventory"
     
     resp = requests.get(url, timeout=5)
     resp.raise_for_status()  # if API is bad -> throw

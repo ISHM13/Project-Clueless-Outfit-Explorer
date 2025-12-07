@@ -23,11 +23,11 @@ if "role" not in st.session_state:
     st.session_state["role"] = "business_owner"
 
 if "business_id" not in st.session_state:
-    st.session_state["business_id"] = 1  # your home/login page can override this
+    st.session_state["business_id"] = 40  # your home/login page can override this
 
 
 def get_business_id() -> int:
-    return st.session_state.get("business_id", 1)
+    return st.session_state.get("business_id", 40)
 
 
 # ---------------- API HELPERS ----------------

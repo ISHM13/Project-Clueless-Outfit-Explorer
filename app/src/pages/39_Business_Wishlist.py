@@ -7,10 +7,10 @@ SideBarLinks()
 API_BASE_URL = "http://web-api:4000"  
 
 def get_business_id() -> int:
-    return st.session_state.get("business_id", 1)
+    return st.session_state.get("business_id", 40)
 
 def get_wishlist_id() -> int:
-    return st.session_state.get("wishlist_id", 1)
+    return st.session_state.get("wishlist_id", 507)
 
 # ----------------- HELPERS (API CALLS) -----------------
 
