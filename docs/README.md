@@ -5,6 +5,9 @@ Welcome to our project!
 ### Project Overview
 Clueless Outfit Explorer and Manager is a web application that caters to many user personas; however its main functionality is for the general consumer to view, manage, organize, and add to a digital wardrobe for easy accessibility and planning. With an intuitive UI, the user can explore for outfit inspiration, view and add clothing items to closets organized by the user, and build/view outfits of clothing items for future wardrobe planning. Along with the general consumer, Clueless allows for brands to view data on consumer interests based on what consumers save to their digital wishlists and closets. This solves potential user indecisiveness, saves time on outfit planning, reduces overconsumption as the user knows exactly what is in their closet, and allows for brands to have insight on what the general consumer wants, eliminating potential deadstock.
 
+### Project Links & Deliverables:
+- **Link to Demo Video**: https://drive.google.com/file/d/1pn-LhD3tTi--uOr50C_lu-4Ff4sPd620/view?usp=sharing
+- **Link to Project Submission Doc**: https://github.com/averyneuner/25F-Project-Clueless.git
 
 ### Key Personas:
 1) General Consumer (Rachel)
@@ -113,6 +116,9 @@ Clueless Outfit Explorer and Manager is a web application that caters to many us
    To check if they're running run this in terminal:
 
    ```docker compose ps```
+
+   Helpful information for docker compose containers can be found in: docker-compose.yaml
+
 
 4) Once docker is up and running, you can view our web application with this link in your browser:
 
