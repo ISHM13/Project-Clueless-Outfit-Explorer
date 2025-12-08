@@ -20,7 +20,7 @@ if "business_name" not in st.session_state:
     st.session_state["business_name"] = "Rebecca's Vintage Closet"
 
 if "business_id" not in st.session_state:
-    st.session_state["business_id"] = 1
+    st.session_state["business_id"] = 40
 
 business_id = st.session_state["business_id"]
 
