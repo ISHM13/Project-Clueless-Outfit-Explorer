@@ -1,4 +1,4 @@
-# Clueless: The Ultimate Outfit Explorer Web Application
+# Clueless: Closet Manager Web Application
 
 Welcome to our project!
 
